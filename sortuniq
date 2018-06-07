@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+
+import argparse
+import curses
+from curses.wrapper import wrapper
+import pandas as pd
+
+
+VALUE_COUNTS = {}
+
+
+def package(d):
+
+    res = pd.Series(d).sort_values(ascending=False)
+    res = res.to_string()
+    res = res.split('\n', NUM_LINES)
+    res = '\n'.join(res[:NUM_LINES])
+    return res
+
+
+def count_values():
+
+    global VALUE_COUNTS
+
+    with open(INFILE, 'rb') as f:
+        i = 0
+        for line in f:
+            if i > 0 and i % WINDOW == 0:
+                yield package(VALUE_COUNTS)
+
+            v = line.strip('\n')
+            VALUE_COUNTS.setdefault(v, 0)
+            VALUE_COUNTS[v] += 1
+            i += 1
+
+    yield package(VALUE_COUNTS)
+
+
+def main(stdscr):
+
+    for results in count_values():
+        stdscr.clear()
+        stdscr.addstr(results)
+        stdscr.refresh()
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num-lines', '-n', type=int, default=20)
+    parser.add_argument('--window', '-w', type=int, default=20)
+    parser.add_argument('--infile', '-i', default='/dev/stdin')
+    parser.add_argument('--outfile', '-o', default='/dev/stdout')
+    parser.add_argument('--delimiter', '-d', default='\t')
+    args = parser.parse_args()
+
+    global NUM_LINES
+    NUM_LINES = args.num_lines
+
+    global WINDOW
+    WINDOW = args.window
+
+    global INFILE
+    INFILE = args.infile
+
+    wrapper(main)
+
+    (
+            pd.Series(VALUE_COUNTS)
+            .sort_values(ascending=False)
+            .to_csv(args.outfile, sep=args.delimiter)
+            )
