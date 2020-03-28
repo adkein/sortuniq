@@ -105,14 +105,11 @@ def write_unabriged_results(outfile):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--height", "-H", type=int, default=20, help="The number of lines displayed.")
-    parser.add_argument("--chunk-size", "-p", type=int, help="The number of lines read before updating the display.")
-    parser.add_argument("--interval", "-t", type=float, help="The wall time in seconds between display updates.")
+    parser.add_argument("--chunk-size", "-s", type=int, help="The number of lines read before updating the display.")
+    parser.add_argument("--interval", "-t", type=float, default=1, help="The wall time in seconds between display updates.")
     parser.add_argument("--infile", "-i")
     parser.add_argument("--outfile", "-o")
     args = parser.parse_args()
-
-    if len([x for x in [args.chunk_size, args.interval] if x is None]) != 1:
-        raise AssertionError("Exactly one of the arguments --chunk-size and --interval must be passed.")
 
     global HEIGHT
     global CHUNK_SIZE
