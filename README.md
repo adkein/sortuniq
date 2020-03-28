@@ -4,28 +4,28 @@ sortuniq
 Motivating use case
 ----
 
-Suppose you have a long stream of input. For example, you can stream the length of each line of each
-file within your home directory:
+Suppose you have a long stream of input. For example, you can stream the length of each filename
+that your user has permission to read:
 
 ```
-find ~ -type f -exec cat {} \; | awk '{print length($0)}'
+find / 2>/dev/null | awk '{print length($0)}'
 ```
 
-Suppose we want the distribution of these line lengths, for whatever reason. Then with existing
+Suppose we want the distribution of these filename lengths, for whatever reason. Then with existing
 tools we could do this:
 
 ```
-find ~ -type f -exec cat {} \; | awk '{print length($0)}' | sort | uniq -c
+find / 2>/dev/null | awk '{print length($0)}' | sort | uniq -c
 ```
 
 What `sortuniq` does is the same thing but `sortuniq` also displays periodically the intermediate
 running counts, so you are no longer left hanging in suspense:
 
 ```
-find ~ -type f -exec cat {} \; | awk '{print length($0)}' | sortuniq
+find / 2>/dev/null | awk '{print length($0)}' | sortuniq
 ```
 
-[![asciicast](https://asciinema.org/a/cUXysHyur9murgK3KFFvlNASe.svg)](https://asciinema.org/a/cUXysHyur9murgK3KFFvlNASe)
+[![asciicast](https://asciinema.org/a/yd5LeJa50uUn7nr3YtWjsU5S0.svg)](https://asciinema.org/a/yd5LeJa50uUn7nr3YtWjsU5S0)
 
 Usage
 ----
