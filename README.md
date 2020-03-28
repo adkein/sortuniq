@@ -25,7 +25,7 @@ running counts, so you are no longer left hanging in suspense:
 find / 2>/dev/null | awk '{print length($0)}' | sortuniq
 ```
 
-[![asciicast](https://asciinema.org/a/yd5LeJa50uUn7nr3YtWjsU5S0.svg)](https://asciinema.org/a/yd5LeJa50uUn7nr3YtWjsU5S0)
+[![asciicast](https://asciinema.org/a/TptavJRuCWP0KG9WLtfqLvgng.svg)](https://asciinema.org/a/TptavJRuCWP0KG9WLtfqLvgng)
 
 Usage
 ----
