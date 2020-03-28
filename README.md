@@ -25,6 +25,8 @@ running counts, so you are no longer left hanging in suspense:
 find ~ -type f -exec cat {} \; | awk '{print length($0)}' | sortuniq
 ```
 
+[![asciicast](https://asciinema.org/a/cUXysHyur9murgK3KFFvlNASe.svg)](https://asciinema.org/a/cUXysHyur9murgK3KFFvlNASe)
+
 Usage
 ----
 
