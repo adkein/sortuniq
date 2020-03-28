@@ -3,6 +3,7 @@
 import argparse
 from curses import wrapper
 from collections import Counter
+import time
 import sys
 
 
@@ -22,6 +23,43 @@ def counts_to_string(height=None):
     return "\n".join(value_counts)
 
 
+def read_chunks_by_size(file_):
+    """Iterate through the input file, breaking into chunks by row count."""
+
+    while True:
+        yield file_.readlines(CHUNK_SIZE)
+
+
+def read_chunks_by_time(file_):
+    """Iterate through the input file, breaking into chunks by timer."""
+
+    while True:
+        chunk = []
+
+        start = time.time()
+        while time.time() < start + INTERVAL:
+            line = file_.readline()
+            if not line:
+                break
+            chunk.append(line.rstrip("\n"))
+
+        yield chunk
+
+
+def read_chunks(file_):
+    """Iterate through the input file, broken into chunks."""
+
+    if CHUNK_SIZE is not None:
+        read_chunks_ = read_chunks_by_size
+    else:
+        read_chunks_ = read_chunks_by_time
+
+    for chunk in read_chunks_(file_):
+        if not chunk:
+            break
+        yield chunk
+
+
 def count_values():
     """
     Read the next chunk of lines of input and update the count.
@@ -29,15 +67,10 @@ def count_values():
     Yields the updated value counts as a string to be displayed.
     """
 
-    f = sys.stdin if INFILE is None else open(INFILE, 'r')
+    f = sys.stdin if INFILE is None else open(INFILE, "r")
 
     try:
-        while True:
-            chunk = f.readlines(PERIOD)
-
-            if not chunk:
-                break
-
+        for chunk in read_chunks(f):
             values = [line.rstrip("\n") for line in chunk]
 
             VALUE_COUNTS.update(values)
@@ -60,10 +93,13 @@ def sortuniq(stdscr):
 def write_unabriged_results(outfile):
     """Write results once all input has been processed."""
 
-    f = sys.stdout if outfile is None else open(outfile, 'w')
+    f = sys.stdout if outfile is None else open(outfile, "w")
 
     try:
         f.write(counts_to_string() + "\n")
+
+    except KeyboardInterrupt:
+        pass
 
     finally:
         f.close()
@@ -72,17 +108,23 @@ def write_unabriged_results(outfile):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--height", "-H", type=int, default=20, help="The number of lines displayed.")
-    parser.add_argument("--period", "-p", type=int, default=20, help="The number of lines read before updating the display.")
+    parser.add_argument("--chunk-size", "-p", type=int, help="The number of lines read before updating the display.")
+    parser.add_argument("--interval", "-t", type=float, help="The wall time in seconds between display updates.")
     parser.add_argument("--infile", "-i")
     parser.add_argument("--outfile", "-o")
     args = parser.parse_args()
 
+    if len([x for x in [args.chunk_size, args.interval] if x is None]) != 1:
+        raise AssertionError("Exactly one of the arguments --chunk-size and --interval must be passed.")
+
     global HEIGHT
-    global PERIOD
+    global CHUNK_SIZE
+    global INTERVAL
     global INFILE
 
     HEIGHT = args.height
-    PERIOD = args.period
+    CHUNK_SIZE = args.chunk_size
+    INTERVAL = args.interval
     INFILE = args.infile
 
     wrapper(sortuniq)
