@@ -98,9 +98,6 @@ def write_unabriged_results(outfile):
     try:
         f.write(counts_to_string() + "\n")
 
-    except KeyboardInterrupt:
-        pass
-
     finally:
         f.close()
 
@@ -133,4 +130,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
