@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from curses import wrapper
+import curses
 from collections import Counter
 import time
 import sys
@@ -124,7 +124,7 @@ def main():
     INTERVAL = args.interval
     INFILE = args.infile
 
-    wrapper(sortuniq)
+    curses.wrapper(sortuniq)
 
     write_unabriged_results(args.outfile)
 
