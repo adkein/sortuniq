@@ -46,5 +46,6 @@ Clone this repository and then:
 
 ```
 cd sortuniq
+sudo pip3 install -r requirements.txt
 sudo python3 setup.py install
 ```
