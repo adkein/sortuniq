@@ -44,7 +44,7 @@ sortuniq -h
 Installation
 ----
 
-Clone this repository and then:
+Clone this repository and:
 
 ```
 cd sortuniq
